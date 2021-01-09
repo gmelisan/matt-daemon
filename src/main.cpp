@@ -36,7 +36,7 @@ static void parse_options(int argc, char **argv)
 
     strncpy(buf, DEFAULT_PORT_NUMBER, 99);
     g_options.port = buf;
-    while ((opt = getopt(argc, argv, "hnp:uv")) != -1) {
+    while ((opt = getopt(argc, argv, "hnp:v")) != -1) {
         switch (opt) {
         case 'h':
             printf("%s", HELP_TEXT);
@@ -46,9 +46,6 @@ static void parse_options(int argc, char **argv)
             break ;
         case 'p':
             g_options.port = optarg;
-            break ;
-        case 'u':
-            g_options.udp = true;
             break ;
         case 'v':
             printf("%s, version %s\n", PROGRAM_NAME, PROGRAM_VERSION);

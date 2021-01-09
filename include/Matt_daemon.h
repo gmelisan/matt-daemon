@@ -17,7 +17,6 @@
 "    -h          This help\n" \
 "    -n          No fork at startup\n" \
 "    -p [N]      Listen to port N (default " DEFAULT_PORT_NUMBER ")\n" \
-"    -u          Use UDP instead of TCP\n" \
 "    -v          Print program version and exit\n" \
 ""
 
@@ -25,7 +24,6 @@ struct s_options
 {
     bool no_fork;
     char *port;
-    bool udp;
 };
 
 extern s_options g_options;

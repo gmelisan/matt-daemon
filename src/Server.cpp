@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <cstdlib>
+#include <sys/wait.h>
 
 #include "Matt_daemon.h"
 #include "Tintin_reporter.h"
@@ -20,7 +21,6 @@ Server::Server()
 
 Server::~Server()
 {
-    clear();
 }
 
 Server::Server(const Server &s)
@@ -74,18 +74,37 @@ bool Server::init()
     return true;
 }
 
+static void spawn_shell()
+{
+    pid_t pid;
+    int status;
+    const char *cmd[] = {"sh", "-i", nullptr};
+
+    pid = fork();
+    if (pid < 0) {
+        ttr.perror("fork()");
+        return ;
+    }
+    if (pid == 0) {
+        execv("/bin/sh", const_cast<char *const *>(cmd));
+    }
+    waitpid(pid, &status, 0);
+    ttr.info("Quitting shell mode.");
+}
+
 bool Server::start()
 {
     struct sockaddr_storage claddr;
     int cfd, ret;
     socklen_t addrlen;
-    char buf[100];
+    char c;
     std::string income;
     std::vector<std::string> v;
 
     daemon();
     if (listen(sfd, LISTEN_BACKLOG) == -1) {
         ttr.error("listen()");
+        clear();
         return false;
     }
     addrlen = sizeof(struct sockaddr_storage);
@@ -99,29 +118,42 @@ bool Server::start()
                 break ;
         }
         income.clear();
-        while ((ret = read(cfd, buf, 99)) > 0) {
-            income += buf;
-            memset(buf, 0, 100);
+        while ((ret = read(cfd, &c, 1)) > 0) {
+            if (c != '\n') {
+                income.push_back(c);
+            } else {
+                if (income == "\n") {
+                    // ignore
+                } else if (income == "shell") {
+                    ttr.info("Entering shell mode");
+                    dup2(cfd, 0);
+                    dup2(cfd, 1);
+                    dup2(cfd, 2);
+                    spawn_shell();
+                } else if (income == "quit") {
+                    ttr.info("Requested quit");
+                    exit_flag = true;
+                    break ;
+                } else {
+                    ttr.log("User input: %s", income.c_str());
+                }
+                income.clear();
+            }
         }
         if (ret < 0) {
             ttr.perror("read()");
         }
-        split(income, v);
-        for (auto i : v) {
-            if (i == "quit") {
-                ttr.info("Requested quit");
-                exit_flag = true;
-                break ;
-            }
-            ttr.log("User input: %s", i.c_str());
-        }
+        //split(income, v);
+        
         close(cfd);
         if (exit_flag)
             break ;
     }
+    clear();
     return exit_flag;
 }
 
+/*
 void Server::split(std::string str, std::vector<std::string> &v)
 {
     std::string msg;
@@ -136,7 +168,7 @@ void Server::split(std::string str, std::vector<std::string> &v)
     }
     v.push_back(str);
 }
-
+*/
 
 void Server::daemon()
 {

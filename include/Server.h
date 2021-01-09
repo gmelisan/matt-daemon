@@ -7,7 +7,6 @@
 class Server
 {
     int sfd; // server socket fd
-
     bool init_tcp();
     bool init_udp();
 public:
@@ -20,7 +19,7 @@ public:
     bool init();
     void clear();
     bool start();
-    void split(std::string str, std::vector<std::string> &v);
+    //void split(std::string str, std::vector<std::string> &v);
 };
 
 
