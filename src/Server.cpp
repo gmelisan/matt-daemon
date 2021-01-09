@@ -117,25 +117,35 @@ bool Server::start()
             } else
                 break ;
         }
+        if (!g_options.dont_ask_passwd) {
+            if (write(cfd, "Password:\n", 10))
+                ttr.perror("write()");
+            auth_mode = true;
+            ttr.info("Asking for password.");
+        }
         income.clear();
         while ((ret = read(cfd, &c, 1)) > 0) {
             if (c != '\n') {
                 income.push_back(c);
             } else {
-                if (income == "\n") {
-                    // ignore
+                if (income == "quit") {
+                    ttr.info("Requested quit");
+                    exit_flag = true;
+                    break ;
+                } else if (auth_mode) {
+                    if (income == "2142") {
+                        write(cfd, "Welcome\n", 8);
+                        auth_mode = false;
+                        ttr.info("Access granted.");
+                    }
                 } else if (income == "shell") {
                     ttr.info("Entering shell mode");
                     dup2(cfd, 0);
                     dup2(cfd, 1);
                     dup2(cfd, 2);
                     spawn_shell();
-                } else if (income == "quit") {
-                    ttr.info("Requested quit");
-                    exit_flag = true;
-                    break ;
-                } else {
-                    ttr.log("User input: %s", income.c_str());
+                } else if (income.size()) {
+                    ttr.log("User input: '%s'", income.c_str());
                 }
                 income.clear();
             }
@@ -152,6 +162,7 @@ bool Server::start()
     clear();
     return exit_flag;
 }
+
 
 /*
 void Server::split(std::string str, std::vector<std::string> &v)

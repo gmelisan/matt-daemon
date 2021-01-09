@@ -7,6 +7,7 @@
 class Server
 {
     int sfd; // server socket fd
+    bool auth_mode = false;
     bool init_tcp();
     bool init_udp();
 public:

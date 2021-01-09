@@ -14,6 +14,7 @@
 # define HELP_TEXT \
 "Usage: " PROGRAM_NAME " -[hnuv]\n" \
 "Available options:\n" \
+"    -d          Don't ask password\n" \
 "    -h          This help\n" \
 "    -n          No fork at startup\n" \
 "    -p [N]      Listen to port N (default " DEFAULT_PORT_NUMBER ")\n" \
@@ -22,6 +23,7 @@
 
 struct s_options
 {
+    bool dont_ask_passwd;
     bool no_fork;
     char *port;
 };

@@ -36,8 +36,11 @@ static void parse_options(int argc, char **argv)
 
     strncpy(buf, DEFAULT_PORT_NUMBER, 99);
     g_options.port = buf;
-    while ((opt = getopt(argc, argv, "hnp:v")) != -1) {
+    while ((opt = getopt(argc, argv, "dhnp:v")) != -1) {
         switch (opt) {
+        case 'd':
+            g_options.dont_ask_passwd = true;
+            break ;
         case 'h':
             printf("%s", HELP_TEXT);
             exit(EXIT_SUCCESS);
