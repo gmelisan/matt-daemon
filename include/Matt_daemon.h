@@ -9,7 +9,7 @@
 # define DEFAULT_LOCK_FILE_PATH "/var/lock/matt_daemon.lock"
 
 # define DEFAULT_PORT_NUMBER    "4242"
-# define LISTEN_BACKLOG         10
+# define LISTEN_BACKLOG         1
 
 # define HELP_TEXT \
 "Usage: " PROGRAM_NAME " -[hnuv]\n" \
@@ -30,5 +30,7 @@ struct s_options
 
 extern s_options g_options;
 extern bool exit_flag;
+
+void matt_die(int code, bool unl = true);
 
 #endif

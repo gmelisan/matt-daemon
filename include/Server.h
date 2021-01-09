@@ -1,6 +1,9 @@
 #ifndef SERVER_H
 # define SERVER_H
 
+# include <vector>
+# include <string>
+
 class Server
 {
     int sfd; // server socket fd
@@ -17,6 +20,7 @@ public:
     bool init();
     void clear();
     bool start();
+    void split(std::string str, std::vector<std::string> &v);
 };
 
 

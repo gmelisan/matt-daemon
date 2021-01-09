@@ -13,14 +13,15 @@ Server::Server()
 {
     ttr.info("Creating server.");
     if (!init()) {
-        ttr.info("Quitting.");
-        exit(EXIT_FAILURE);
+        matt_die(1);
     }
-    ttr.info("Server created");
+    ttr.info("Server created.");
 }
 
 Server::~Server()
-{}
+{
+    clear();
+}
 
 Server::Server(const Server &s)
 {
@@ -80,6 +81,7 @@ bool Server::start()
     socklen_t addrlen;
     char buf[100];
     std::string income;
+    std::vector<std::string> v;
 
     daemon();
     if (listen(sfd, LISTEN_BACKLOG) == -1) {
@@ -101,15 +103,40 @@ bool Server::start()
             income += buf;
             memset(buf, 0, 100);
         }
-        if (income == "quit") {
-            ttr.info("Requested quit");
-            exit_flag = true;
-            break ;
+        if (ret < 0) {
+            ttr.perror("read()");
         }
-        ttr.log("%s", income.c_str());
+        split(income, v);
+        for (auto i : v) {
+            if (i == "quit") {
+                ttr.info("Requested quit");
+                exit_flag = true;
+                break ;
+            }
+            ttr.log("User input: %s", i.c_str());
+        }
+        close(cfd);
+        if (exit_flag)
+            break ;
     }
     return exit_flag;
 }
+
+void Server::split(std::string str, std::vector<std::string> &v)
+{
+    std::string msg;
+    size_t pos = 0;
+
+    if (str.empty())
+        return ;
+    v.clear();
+    while ((pos = str.find('\n')) != std::string::npos) {
+        v.push_back(str.substr(0, pos));
+        str.erase(0, pos + 1);
+    }
+    v.push_back(str);
+}
+
 
 void Server::daemon()
 {
@@ -132,5 +159,5 @@ void Server::daemon()
     if (pid > 0)
         exit(EXIT_SUCCESS);
     umask(0);
-    ttr.info("started. PID: %d", getpid());
+    ttr.info("started. PID: %d.", getpid());
 }
