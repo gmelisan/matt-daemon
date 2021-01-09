@@ -16,18 +16,26 @@ Server::Server()
         ttr.info("Quitting.");
         exit(EXIT_FAILURE);
     }
-    ttr.info("Server created")
+    ttr.info("Server created");
 }
 
 Server::~Server()
 {}
 
 Server::Server(const Server &s)
-{}
+{
+    (void)s;
+}
 
 Server& Server::operator=(const Server &s)
 {
+    (void)s;
     return *this;
+}
+
+void Server::clear()
+{
+    close(sfd);
 }
 
 bool Server::init()
@@ -40,8 +48,8 @@ bool Server::init()
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = AF_UNSPEC;
     hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
-    if (getaddrinfo(nullptr, g_options.port, &hints, &result) != 0) {
-        ttr.perror("getaddrinfo()");
+    if ((ret = getaddrinfo(nullptr, g_options.port, &hints, &result)) != 0) {
+        ttr.error("getaddrinfo(): %s", gai_strerror(ret));
         return false;
     }
     optval = 1;
@@ -62,6 +70,7 @@ bool Server::init()
         return false;
     }
     freeaddrinfo(result);
+    return true;
 }
 
 bool Server::start()

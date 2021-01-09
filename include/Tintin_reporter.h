@@ -23,7 +23,7 @@ public:
     Tintin_reporter& operator=(const Tintin_reporter &ttr);
 
     bool init(const char *filename = DEFAULT_LOG_PATH);
-    bool clear();
+    void clear();
     void info(const char *format, ...) __attribute__ ((format (printf, 2, 3)));
     void log(const char *format, ...) __attribute__ ((format (printf, 2, 3)));
     void error(const char *format, ...) __attribute__ ((format (printf, 2, 3)));

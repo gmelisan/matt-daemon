@@ -20,7 +20,7 @@ $(OBJ): \
 
 %.o: %.cpp
 	$(CC) $(CPPFLAGS) -I./include -I$(LIBFT)/include -c -o $@ $<
-	@printf "\033[1;34mCompiling ($(CFLAGS)) \033[0;36m$<\033[0m\n"
+	@printf "\033[1;34mCompiling ($(CPPFLAGS)) \033[0;36m$<\033[0m\n"
 
 clean:
 	@rm -f $(OBJ)

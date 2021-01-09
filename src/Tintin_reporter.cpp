@@ -19,9 +19,13 @@ Tintin_reporter::~Tintin_reporter()
     clear();
 }
 Tintin_reporter::Tintin_reporter(const Tintin_reporter &ttr)
-{}
+{
+    (void)ttr;
+}
+
 Tintin_reporter& Tintin_reporter::operator=(const Tintin_reporter &ttr)
 {
+    (void)ttr;
     return *this;
 }
 
@@ -36,7 +40,7 @@ bool Tintin_reporter::init(const char *filename)
     setvbuf(f, nullptr, _IONBF, 0);
     return true;
 }
-bool Tintin_reporter::clear()
+void Tintin_reporter::clear()
 {
     if (f)
         fclose(f);
@@ -78,5 +82,5 @@ void Tintin_reporter::error(const char *format, ...)
 
 void Tintin_reporter::perror(const char *msg)
 {
-    error("%s: %s", format, strerror(errno));
+    error("%s: %s", msg, strerror(errno));
 }
