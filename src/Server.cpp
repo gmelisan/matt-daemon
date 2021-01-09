@@ -129,7 +129,7 @@ bool Server::start()
                 income.push_back(c);
             } else {
                 if (income == "quit") {
-                    ttr.info("Requested quit");
+                    ttr.info("Requested quit.");
                     exit_flag = true;
                     break ;
                 } else if (auth_mode) {

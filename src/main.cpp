@@ -27,6 +27,7 @@ static void setup_signals()
     for (int i = 1; i < 32; ++i) {
         sigaction(i, &action, nullptr);
     }
+    signal(SIGCHLD, SIG_IGN);
 }
 
 static void parse_options(int argc, char **argv)
@@ -51,7 +52,8 @@ static void parse_options(int argc, char **argv)
             g_options.port = optarg;
             break ;
         case 'v':
-            printf("%s, version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+            printf("%s, by gmelisan. Version %s\n", 
+                    PROGRAM_NAME, PROGRAM_VERSION);
             exit(EXIT_SUCCESS);
         case '?':
             printf("%s", HELP_TEXT);

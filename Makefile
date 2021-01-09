@@ -32,8 +32,10 @@ $(NAME_CLIENT): $(OBJ_CLIENT)
 
 clean:
 	@rm -f $(OBJ)
+	@rm -f $(OBJ_CLIENT)
 
 fclean: clean
 	@rm -f $(NAME)
+	@rm -f $(NAME_CLIENT)
 
 re: fclean all
